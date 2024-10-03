@@ -1,4 +1,3 @@
-import React from "react";
 import { useFolders } from "../context/FileContext";
 import Folder from "./Folder";
 

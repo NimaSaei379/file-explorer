@@ -4,9 +4,11 @@ import {
   FolderIcon,
   FolderOpenIcon,
 } from "@heroicons/react/16/solid/index.js";
-import { Dispatch } from "react";
+import { Dispatch, MouseEvent, useState } from "react";
 import { collapseFolder } from "../context/FileActions";
 import { IAction } from "../context/FileReducer";
+import ContextMenu from "./ContextMenu";
+import NameInputForm from "./NameInputForm";
 
 type FolderBase = {
   name: string;
@@ -26,11 +28,17 @@ function Folder({
   folder,
   dispatch,
   name,
+  parentFolder,
 }: {
   folder: Folders;
   dispatch: Dispatch<IAction>;
   name: string;
+  parentFolder?: string;
 }) {
+  const [openMenuName, setOpenMenuName] = useState<string | undefined>();
+  const [showNameinput, setShowNameinput] = useState<string | undefined>();
+  const [isRenaming, setIsRenaming] = useState(false);
+
   const isFolderWithSubFolders = (
     folder: Folders
   ): folder is FolderWithSubFolder => "folders" in folder;
@@ -45,25 +53,60 @@ function Folder({
         }`}
       />
     );
+
+  function contextMenueHandler(e: MouseEvent) {
+    e.preventDefault();
+    setOpenMenuName(name);
+  }
+
   return (
     <li className="my-1.5">
-      <span className="flex items-center gap-2">
-        {isFolderWithSubFolders(folder) && folder?.folders?.length > 0 && (
-          <button onClick={() => collapseFolder(dispatch, folder.name)}>
-            <ChevronRightIcon
-              className={`size-4 text-gray-400 ${
-                folder.collapse ? "rotate-90" : ""
-              }`}
-            />
-          </button>
+      <span
+        className={`flex items-center gap-2 hover:bg-slate-200 relative ${
+          openMenuName === name ? "bg-slate-300 border border-gray-300" : ""
+        }`}
+        onContextMenu={contextMenueHandler}
+      >
+        {!isRenaming && (
+          <>
+            {isFolderWithSubFolders(folder) && folder?.folders?.length > 0 && (
+              <button onClick={() => collapseFolder(dispatch, folder.name)}>
+                <ChevronRightIcon
+                  className={`size-4 text-gray-400 ${
+                    folder.collapse ? "rotate-90" : ""
+                  }`}
+                />
+              </button>
+            )}
+            {isFolderWithSubFolders(folder) ? (
+              properIcon
+            ) : (
+              <DocumentIcon className="text-sky-300 ml-[22px] size-6" />
+            )}
+            {name}
+          </>
         )}
-        {isFolderWithSubFolders(folder) ? (
-          properIcon
-        ) : (
-          <DocumentIcon className="text-sky-300 ml-[22px] size-6" />
-        )}
-        {name}
+        {openMenuName === name ? (
+          <ContextMenu
+            name={name}
+            setOpenMenuName={setOpenMenuName}
+            setShowNameinput={setShowNameinput}
+            dispatch={dispatch}
+            parentFolder={parentFolder || name}
+            setIsRenaming={setIsRenaming}
+          />
+        ) : null}
       </span>
+      {showNameinput === name && (
+        <NameInputForm
+          folderName={isRenaming ? name : undefined}
+          parentFolder={!isRenaming ? name : undefined}
+          setShowNameinput={setShowNameinput}
+          dispatch={dispatch}
+          isRename={isRenaming}
+          setIsRenaming={setIsRenaming}
+        />
+      )}
       {isFolderWithSubFolders(folder) && folder.collapse && (
         <ul className="pl-6">
           {folder.folders?.map((folder) => (

@@ -75,9 +75,12 @@ export function renameFolder(
   }
 
   if (folder.folders) {
-    folder.folders.map((childFolders) =>
-      renameFolder(childFolders, oldname, newName)
-    );
+    return {
+      ...folder,
+      folders: folder.folders.map((childFolders) =>
+        renameFolder(childFolders, oldname, newName)
+      ),
+    };
   }
   return folder;
 }
