@@ -38,7 +38,7 @@ function Folder({
   const [openMenuName, setOpenMenuName] = useState<string | undefined>();
   const [showNameinput, setShowNameinput] = useState<string | undefined>();
   const [isRenaming, setIsRenaming] = useState(false);
-
+  const [addNewFile, setAddNewFile] = useState(false);
   const isFolderWithSubFolders = (
     folder: Folders
   ): folder is FolderWithSubFolder => "folders" in folder;
@@ -94,6 +94,7 @@ function Folder({
             dispatch={dispatch}
             parentFolder={parentFolder || name}
             setIsRenaming={setIsRenaming}
+            setAddNewFile={setAddNewFile}
           />
         ) : null}
       </span>
@@ -105,6 +106,8 @@ function Folder({
           dispatch={dispatch}
           isRename={isRenaming}
           setIsRenaming={setIsRenaming}
+          addNewFile={addNewFile}
+          setAddNewFile={setAddNewFile}
         />
       )}
       {isFolderWithSubFolders(folder) && folder.collapse && (

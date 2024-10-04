@@ -15,14 +15,18 @@ function NameInputForm({
   setShowNameinput,
   dispatch,
   isRename = false,
+  addNewFile = false,
   setIsRenaming,
+  setAddNewFile,
 }: {
   folderName?: string;
   parentFolder?: string;
   setShowNameinput: (value: string | undefined) => void;
   dispatch: Dispatch<IAction>;
   isRename?: boolean;
+  addNewFile?: boolean;
   setIsRenaming: Dispatch<SetStateAction<boolean>>;
+  setAddNewFile: Dispatch<SetStateAction<boolean>>;
 }) {
   const [inputValue, setInputValue] = useState<string>(folderName || "");
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -32,6 +36,7 @@ function NameInputForm({
       setShowNameinput(undefined);
       setInputValue("");
       setIsRenaming(false);
+      setAddNewFile(false);
     }
   };
 
@@ -43,7 +48,6 @@ function NameInputForm({
   }, []);
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log("rename", isRename, folderName);
 
     if (isRename && folderName) {
       dispatch({
@@ -51,14 +55,20 @@ function NameInputForm({
         folderName,
         newFolderName: inputValue,
       });
-    } else if (parentFolder) {
+    } else if (parentFolder && !addNewFile) {
       dispatch({
         type: ActionType.ADD_FOLDER,
         parentFolder: parentFolder,
         newFolderName: inputValue,
       });
+    } else if (parentFolder && addNewFile) {
+      dispatch({
+        type: ActionType.ADD_FILE,
+        parentFolder: parentFolder,
+        newFileName: inputValue,
+      });
+      setAddNewFile(false);
     }
-
     setShowNameinput(undefined);
   };
 

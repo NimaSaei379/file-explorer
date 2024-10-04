@@ -49,6 +49,34 @@ export function addFolder(
   return folder;
 }
 
+export function addFile(
+  folder: Folders,
+  parentFolder: string,
+  newFileName: string
+): Folders {
+  if (folder.name === parentFolder) {
+    const newFile: Folders = {
+      name: newFileName,
+    };
+    return {
+      ...folder,
+      collapse: true,
+      folders: [...(folder.folders || []), newFile], // Add the new file to folders array
+    };
+  }
+
+  if (folder.folders) {
+    return {
+      ...folder,
+      folders: folder.folders.map((childFolders) =>
+        addFile(childFolders, parentFolder, newFileName)
+      ),
+    };
+  }
+
+  return folder;
+}
+
 export function deleteFolder(
   folder: Folders,
   folderName: string

@@ -21,6 +21,7 @@ function ContextMenu({
   dispatch,
   parentFolder,
   setIsRenaming,
+  setAddNewFile,
 }: {
   name: string;
   setOpenMenuName: Dispatch<SetStateAction<string | undefined>>;
@@ -28,6 +29,7 @@ function ContextMenu({
   dispatch: Dispatch<IAction>;
   parentFolder: string;
   setIsRenaming: Dispatch<SetStateAction<boolean>>;
+  setAddNewFile: Dispatch<SetStateAction<boolean>>;
 }) {
   const contextMenuRef = useRef<HTMLDivElement | null>(null);
 
@@ -64,6 +66,7 @@ function ContextMenu({
       action: () => {
         setShowNameinput(parentFolder);
         setOpenMenuName(undefined);
+        setAddNewFile(true);
       },
     },
   ];

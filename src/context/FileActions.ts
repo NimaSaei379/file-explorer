@@ -47,6 +47,6 @@ export const addFile = (
   dispatch({
     type: ActionType.ADD_FILE,
     parentFolder,
-    newFolderName: newFileName,
+    newFileName: newFileName,
   });
 };

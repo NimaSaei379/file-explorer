@@ -4,6 +4,7 @@ import {
   deleteFolder,
   renameFolder,
   addFolder,
+  addFile,
 } from "../utils/fileExplorerUtils";
 
 export enum ActionType {
@@ -16,9 +17,10 @@ export enum ActionType {
 
 export type IAction = {
   type: ActionType;
-  folderName?: string; // Used for operations targeting specific folders
-  newFolderName?: string; // Used when adding/renaming
-  parentFolder?: string; // Used when adding files/folders
+  folderName?: string;
+  newFolderName?: string;
+  parentFolder?: string;
+  newFileName?: string;
 };
 
 export const fileTreeReducer = (state: Folders[], actions: IAction) => {
@@ -31,7 +33,7 @@ export const fileTreeReducer = (state: Folders[], actions: IAction) => {
     case ActionType.DELETE_FOLDER:
       return state
         .map((folder) => deleteFolder(folder, actions.folderName as string))
-        .filter(Boolean) as Folders[]; // Filter out nulls (deleted folders)
+        .filter(Boolean) as Folders[];
 
     case ActionType.RENAME_FOLDER:
       return state.map((folder) =>
@@ -53,10 +55,10 @@ export const fileTreeReducer = (state: Folders[], actions: IAction) => {
 
     case ActionType.ADD_FILE:
       return state.map((folder) =>
-        addFolder(
+        addFile(
           folder,
           actions.parentFolder as string,
-          actions.newFolderName as string
+          actions.newFileName as string
         )
       );
 
